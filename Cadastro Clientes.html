@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadastro de Cliente · Florio Alimentos</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0f0f0f;
+    --bg: #f5f2ec;
+    --card: #ffffff;
+    --accent: #c8102e;
+    --accent-dark: #9e0c24;
+    --muted: #7a7670;
+    --border: #e0dbd2;
+    --error: #c8102e;
+    --success: #1a7f4b;
+    --radius: 12px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 80% 10%, rgba(200,16,46,0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 10% 90%, rgba(200,16,46,0.05) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--accent) 0%, transparent 100%);
+  }
+
+  .wrapper {
+    width: 100%;
+    max-width: 580px;
+    animation: fadeUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .header {
+    margin-bottom: 20px;
+    padding-left: 4px;
+  }
+
+  .header p {
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 300;
+    line-height: 1.6;
+  }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 28px 28px 24px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04), 0 12px 40px rgba(0,0,0,0.08);
+    border: 1px solid var(--border);
+  }
+
+  @media (max-width: 480px) {
+    .card {
+      padding: 20px 16px 18px;
+    }
+  }
+
+  .section + .section { margin-top: 14px; }
+
+  .field { margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: 0.03em;
+    margin-bottom: 5px;
+  }
+
+  label span.req {
+    color: var(--accent);
+    margin-left: 2px;
+  }
+
+  input[type="text"],
+  input[type="tel"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--ink);
+    background: #fafaf8;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+    line-height: 1.5;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(200,16,46,0.1);
+  }
+
+  input.invalid, select.invalid, textarea.invalid {
+    border-color: var(--error);
+    box-shadow: 0 0 0 3px rgba(200,16,46,0.12);
+  }
+
+  .error-msg {
+    font-size: 11px;
+    color: var(--error);
+    margin-top: 4px;
+    display: none;
+    font-weight: 500;
+  }
+
+  .error-msg.visible { display: block; }
+
+  .phone-row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 10px;
+  }
+
+  /* Two-column layout for wider screens */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  @media (max-width: 480px) {
+    .two-col {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .select-wrap {
+    position: relative;
+  }
+  .select-wrap::after {
+    content: '';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid var(--muted);
+    pointer-events: none;
+  }
+
+  .doc-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .doc-btn {
+    position: relative;
+  }
+
+  .doc-btn input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0; height: 0;
+  }
+
+  .doc-btn label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    background: #fafaf8;
+    transition: all 0.2s;
+    user-select: none;
+    letter-spacing: 0.02em;
+  }
+
+  .doc-btn label .icon {
+    font-size: 16px;
+  }
+
+  .doc-btn input:checked + label {
+    border-color: var(--accent);
+    background: rgba(200,16,46,0.04);
+    color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(200,16,46,0.1);
+  }
+
+  .doc-btn label:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  #doc-number-wrap {
+    margin-top: 10px;
+    display: none;
+  }
+  #doc-number-wrap.visible { display: block; }
+
+  .btn-submit {
+    margin-top: 20px;
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 16px rgba(200,16,46,0.25);
+  }
+
+  .btn-submit:hover:not(:disabled) {
+    background: var(--accent-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(200,16,46,0.35);
+  }
+
+  .btn-submit:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  .btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .note {
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  /* Success screen */
+  .success-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+    gap: 12px;
+  }
+
+  .success-screen.visible { display: flex; }
+
+  .success-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(26,127,75,0.1);
+    color: var(--success);
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+
+  .success-screen h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--ink);
+  }
+
+  .success-screen p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .btn-novo {
+    margin-top: 8px;
+    padding: 12px 28px;
+    border: 1.5px solid var(--accent);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--accent);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .btn-novo:hover {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  /* Firebase loading indicator */
+  .firebase-status {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    font-size: 11px;
+    color: var(--muted);
+    background: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: none;
+  }
+  .firebase-status.visible { display: block; }
+
+  .optional-tag {
+    font-size: 10px;
+    font-weight: 400;
+    color: var(--muted);
+    margin-left: 4px;
+    letter-spacing: 0.02em;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+  <div class="header">
+    <p>Preencha os dados abaixo e nossa equipe entrará em contato o quanto antes.</p>
+  </div>
+
+  <div class="card">
+
+    <!-- Success screen -->
+    <div class="success-screen" id="success">
+      <div class="success-icon">✓</div>
+      <h2>Mensagem enviada!</h2>
+      <p>Seus dados foram recebidos com sucesso.<br>Em breve entraremos em contato.</p>
+      <button class="btn-novo" onclick="resetForm()">Novo Cadastro</button>
+    </div>
+
+    <!-- Form -->
+    <form id="form" novalidate>
+
+      <!-- NOME + CIDADE em duas colunas -->
+      <div class="section">
+        <div class="two-col">
+          <div class="field">
+            <label for="nome">Nome <span class="req">*</span></label>
+            <input type="text" id="nome" placeholder="Seu nome">
+            <div class="error-msg" id="erro-nome">Por favor, informe seu nome.</div>
+          </div>
+          <div class="field">
+            <label for="cidade">Cidade <span class="req">*</span></label>
+            <input type="text" id="cidade" placeholder="Ex: São Paulo">
+            <div class="error-msg" id="erro-cidade">Por favor, informe a cidade.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ESTADO + TELEFONE em duas colunas -->
+      <div class="section">
+        <div class="two-col">
+          <div class="field">
+            <label for="estado">Estado <span class="req">*</span></label>
+            <div class="select-wrap">
+              <select id="estado">
+                <option value="">Selecione o estado</option>
+                <option>AC</option><option>AL</option><option>AP</option><option>AM</option>
+                <option>BA</option><option>CE</option><option>DF</option><option>ES</option>
+                <option>GO</option><option>MA</option><option>MT</option><option>MS</option>
+                <option>MG</option><option>PA</option><option>PB</option><option>PR</option>
+                <option>PE</option><option>PI</option><option>RJ</option><option>RN</option>
+                <option>RS</option><option>RO</option><option>RR</option><option>SC</option>
+                <option>SP</option><option>SE</option><option>TO</option>
+              </select>
+            </div>
+            <div class="error-msg" id="erro-estado">Por favor, selecione o estado.</div>
+          </div>
+          <div class="field">
+            <label>Telefone com DDD <span class="req">*</span></label>
+            <div class="phone-row">
+              <div>
+                <input type="tel" id="ddd" placeholder="DDD" maxlength="2" inputmode="numeric">
+              </div>
+              <div>
+                <input type="tel" id="fone" placeholder="99999-9999" maxlength="10" inputmode="numeric">
+              </div>
+            </div>
+            <div class="error-msg" id="erro-fone">Informe DDD (2 dígitos) e telefone válido.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEGMENTO -->
+      <div class="section">
+        <div class="field">
+          <label for="segmento">Segmento <span class="req">*</span></label>
+          <div class="select-wrap">
+            <select id="segmento">
+              <option value="">Selecione o segmento</option>
+              <option value="Supermercado">🛒 Supermercado</option>
+              <option value="Empório">🏪 Empório</option>
+              <option value="Distribuidor">🚚 Distribuidor</option>
+              <option value="Restaurante">🍽️ Restaurante</option>
+              <option value="Padaria">🥖 Padaria</option>
+              <option value="Conveniência">🏬 Conveniência</option>
+              <option value="Loja de Produtos Naturais">🌿 Loja de Produtos Naturais</option>
+              <option value="Pessoa Física / CPF">👤 Pessoa Física / CPF</option>
+              <option value="Atacado">📦 Atacado</option>
+              <option value="Indústria">🏭 Indústria</option>
+              <option value="Outro">✳️ Outro</option>
+            </select>
+          </div>
+          <div class="error-msg" id="erro-segmento">Por favor, selecione o segmento.</div>
+        </div>
+      </div>
+
+      <!-- DOCUMENTO -->
+      <div class="section">
+        <div class="field">
+          <label>Cadastro Fiscal <span class="req">*</span></label>
+          <div class="doc-toggle">
+            <div class="doc-btn">
+              <input type="radio" name="doc-type" id="tipo-cpf" value="CPF">
+              <label for="tipo-cpf"><span class="icon">🆔</span> CPF</label>
+            </div>
+            <div class="doc-btn">
+              <input type="radio" name="doc-type" id="tipo-cnpj" value="CNPJ">
+              <label for="tipo-cnpj"><span class="icon">🏢</span> CNPJ</label>
+            </div>
+          </div>
+          <div class="error-msg" id="erro-doctype">Selecione CPF ou CNPJ.</div>
+
+          <div id="doc-number-wrap">
+            <label for="doc-number" id="doc-label" style="margin-top:10px;">Número <span class="req">*</span></label>
+            <input type="text" id="doc-number" placeholder="" maxlength="18" inputmode="numeric">
+            <div class="error-msg" id="erro-docnum">Documento inválido.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MENSAGEM OPCIONAL -->
+      <div class="section">
+        <div class="field">
+          <label for="mensagem">Mensagem <span class="optional-tag">(opcional)</span></label>
+          <textarea id="mensagem" placeholder="Alguma dúvida ou informação adicional? Escreva aqui…"></textarea>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit" id="btn-enviar">Enviar Cadastro →</button>
+      <p class="note"><span style="color:var(--accent)">*</span> Todos os campos são obrigatórios</p>
+    </form>
+
+  </div>
+</div>
+
+<div class="firebase-status" id="firebase-status">Conectando ao Firebase...</div>
+
+<!-- Firebase SDK via CDN -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>
+
+<script>
+// ── Firebase Config ─────────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyC9GUjz57QeFJdboy6nGOAvXm_y7nqJTcY",
+  authDomain: "contato-site-fb78a.firebaseapp.com",
+  databaseURL: "https://contato-site-fb78a-default-rtdb.firebaseio.com",
+  projectId: "contato-site-fb78a",
+  storageBucket: "contato-site-fb78a.firebasestorage.app",
+  messagingSenderId: "667058070930",
+  appId: "1:667058070930:web:5f16979228b364655e4d4b",
+  measurementId: "G-ZXB4Q06T74"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const analytics = firebase.analytics();
+
+// ── Formatação ──────────────────────────────────────────────────
+const dddEl    = document.getElementById('ddd');
+const foneEl   = document.getElementById('fone');
+const docNumEl = document.getElementById('doc-number');
+const docLabel = document.getElementById('doc-label');
+const docWrap  = document.getElementById('doc-number-wrap');
+
+dddEl.addEventListener('input', () => {
+  dddEl.value = dddEl.value.replace(/\D/g, '').slice(0, 2);
+});
+
+foneEl.addEventListener('input', () => {
+  let v = foneEl.value.replace(/\D/g, '').slice(0, 9);
+  if (v.length > 5) v = v.slice(0, 5) + '-' + v.slice(5);
+  foneEl.value = v;
+});
+
+document.querySelectorAll('input[name="doc-type"]').forEach(r => {
+  r.addEventListener('change', () => {
+    const t = r.value;
+    docWrap.classList.add('visible');
+    docNumEl.value = '';
+    if (t === 'CPF') {
+      docLabel.innerHTML = 'CPF <span class="req">*</span>';
+      docNumEl.placeholder = '000.000.000-00';
+      docNumEl.maxLength = 14;
+    } else {
+      docLabel.innerHTML = 'CNPJ <span class="req">*</span>';
+      docNumEl.placeholder = '00.000.000/0000-00';
+      docNumEl.maxLength = 18;
+    }
+    hide('erro-doctype');
+  });
+});
+
+docNumEl.addEventListener('input', () => {
+  const tipo = document.querySelector('input[name="doc-type"]:checked')?.value;
+  let v = docNumEl.value.replace(/\D/g, '');
+  if (tipo === 'CPF') {
+    v = v.slice(0, 11);
+    v = v.replace(/(\d{3})(\d)/, '$1.$2')
+         .replace(/(\d{3})(\d)/, '$1.$2')
+         .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+  } else {
+    v = v.slice(0, 14);
+    v = v.replace(/(\d{2})(\d)/, '$1.$2')
+         .replace(/(\d{3})(\d)/, '$1.$2')
+         .replace(/(\d{3})(\d)/, '$1/$2')
+         .replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+  }
+  docNumEl.value = v;
+});
+
+function show(id) { document.getElementById(id).classList.add('visible'); }
+function hide(id) { document.getElementById(id).classList.remove('visible'); }
+function markInvalid(el, errId) { el.classList.add('invalid'); show(errId); }
+function markValid(el, errId)   { el.classList.remove('invalid'); hide(errId); }
+
+function validateCPF(cpf) {
+  const n = cpf.replace(/\D/g, '');
+  if (n.length !== 11 || /^(\d)\1+$/.test(n)) return false;
+  let s = 0;
+  for (let i = 0; i < 9; i++) s += +n[i] * (10 - i);
+  let r = (s * 10) % 11; if (r === 10 || r === 11) r = 0;
+  if (r !== +n[9]) return false;
+  s = 0; for (let i = 0; i < 10; i++) s += +n[i] * (11 - i);
+  r = (s * 10) % 11; if (r === 10 || r === 11) r = 0;
+  return r === +n[10];
+}
+
+function validateCNPJ(cnpj) {
+  const n = cnpj.replace(/\D/g, '');
+  if (n.length !== 14 || /^(\d)\1+$/.test(n)) return false;
+  const calc = (len) => {
+    let s = 0, pos = len - 7;
+    for (let i = len; i >= 1; i--) { s += +n[len - i] * pos--; if (pos < 2) pos = 9; }
+    return s % 11 < 2 ? 0 : 11 - (s % 11);
+  };
+  return calc(12) === +n[12] && calc(13) === +n[13];
+}
+
+// ── Submit ──────────────────────────────────────────────────────
+document.getElementById('form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  let ok = true;
+
+  const nome      = document.getElementById('nome');
+  const cidade    = document.getElementById('cidade');
+  const estado    = document.getElementById('estado');
+  const ddd       = document.getElementById('ddd');
+  const fone      = document.getElementById('fone');
+  const segmento  = document.getElementById('segmento');
+  const docType   = document.querySelector('input[name="doc-type"]:checked');
+  const mensagem  = document.getElementById('mensagem');
+
+  if (!nome.value.trim()) {
+    markInvalid(nome, 'erro-nome'); ok = false;
+  } else markValid(nome, 'erro-nome');
+
+  if (!cidade.value.trim()) {
+    markInvalid(cidade, 'erro-cidade'); ok = false;
+  } else markValid(cidade, 'erro-cidade');
+
+  if (!estado.value) {
+    markInvalid(estado, 'erro-estado'); ok = false;
+  } else markValid(estado, 'erro-estado');
+
+  const dddVal  = ddd.value.replace(/\D/g, '');
+  const foneVal = fone.value.replace(/\D/g, '');
+  if (dddVal.length !== 2 || foneVal.length < 8) {
+    markInvalid(fone, 'erro-fone'); markInvalid(ddd, 'erro-fone'); ok = false;
+  } else { markValid(fone, 'erro-fone'); markValid(ddd, 'erro-fone'); }
+
+  if (!segmento.value) {
+    markInvalid(segmento, 'erro-segmento'); ok = false;
+  } else markValid(segmento, 'erro-segmento');
+
+  if (!docType) {
+    show('erro-doctype'); ok = false;
+  } else {
+    hide('erro-doctype');
+    const tipo = docType.value;
+    const docVal = docNumEl.value;
+    const valid = tipo === 'CPF' ? validateCPF(docVal) : validateCNPJ(docVal);
+    if (!valid) {
+      markInvalid(docNumEl, 'erro-docnum'); ok = false;
+    } else markValid(docNumEl, 'erro-docnum');
+  }
+
+  if (!ok) return;
+
+  const btn = document.getElementById('btn-enviar');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
+
+  const statusEl = document.getElementById('firebase-status');
+  statusEl.classList.add('visible');
+
+  // Dados com a origem "Florio" automaticamente
+  const dados = {
+    nome: nome.value.trim(),
+    cidade: cidade.value.trim(),
+    estado: estado.value,
+    telefone: `(${dddVal}) ${fone.value.trim()}`,
+    segmento: segmento.value,
+    tipoDoc: docType.value,
+    documento: docNumEl.value,
+    mensagem: mensagem.value.trim() || '',
+    status: "Novo Lead",
+    origem: "Florio Alimentos",  // 🔥 RÓTULO AUTOMÁTICO DE ORIGEM
+    criadoEm: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  try {
+    await db.collection('clientes').add(dados);
+    statusEl.classList.remove('visible');
+    document.getElementById('form').style.display = 'none';
+    document.getElementById('success').classList.add('visible');
+  } catch (err) {
+    console.error('Erro ao salvar no Firebase:', err);
+    statusEl.classList.remove('visible');
+    btn.disabled = false;
+    btn.textContent = 'Enviar Cadastro →';
+    alert('Erro ao enviar os dados. Verifique sua conexão e tente novamente.\n\nDetalhes: ' + err.message);
+  }
+});
+
+function resetForm() {
+  document.getElementById('form').reset();
+  document.getElementById('form').style.display = 'block';
+  document.getElementById('success').classList.remove('visible');
+  document.getElementById('doc-number-wrap').classList.remove('visible');
+  document.getElementById('btn-enviar').disabled = false;
+  document.getElementById('btn-enviar').textContent = 'Enviar Cadastro →';
+  document.querySelectorAll('.invalid').forEach(el => el.classList.remove('invalid'));
+  document.querySelectorAll('.error-msg').forEach(el => el.classList.remove('visible'));
+}
+</script>
+</body>
+</html>
