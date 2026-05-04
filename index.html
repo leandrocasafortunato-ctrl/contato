@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cadastro de Cliente · Florio Alimentos</title>
+<title>Cadastro de Cliente · Casa Fortunato</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -16,7 +16,7 @@
     --accent-dark: #a32d21;
     --muted: #7a7670;
     --border: #e0dbd2;
-    --error: #a32d21;
+    --error: #150f0f;
     --success: #154633;
     --radius: 12px;
   }
@@ -673,7 +673,7 @@ document.getElementById('form').addEventListener('submit', async (e) => {
     documento: docNumEl.value,
     mensagem: mensagem.value.trim() || '',
     status: "Novo Lead",
-    origem: "Florio Alimentos",  // 🔥 RÓTULO AUTOMÁTICO DE ORIGEM
+    origem: "Casa Fortunato",  // 🔥 RÓTULO AUTOMÁTICO DE ORIGEM
     criadoEm: firebase.firestore.FieldValue.serverTimestamp()
   };
 
